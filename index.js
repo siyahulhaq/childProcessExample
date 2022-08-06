@@ -1,5 +1,5 @@
 const express = require('express');
-const {fork, exec} = require('child_process');
+const {fork, exec,spawn} = require('child_process');
 const app = express();
 
 app.get('/exec', (req, res) => {
@@ -17,6 +17,18 @@ app.get('/exec', (req, res) => {
         res.send('no cmd');
     }
 });
+
+app.get('/spawn', (req, res) => {
+    const [cmd, ...args] = req.query.cmd?.split?.(' ');
+    const child = spawn(cmd, args);
+    child.stdout.on('data', (data) => {
+        res.send(data);
+    })
+    child.stderr.on('data', (data) => {
+        res.send(data);
+    })
+    
+})
 
 app.get('fork/one', (req, res) => {
     const sum = longTask();
